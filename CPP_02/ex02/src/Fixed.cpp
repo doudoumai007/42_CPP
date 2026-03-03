@@ -15,10 +15,10 @@ Fixed::~Fixed()
 Fixed::Fixed(const Fixed& other)
 {
 	std::cout << "Copy constructor called\n";
-	*this = other; // call Copy assignment operator but NOT obligatory
+	// *this = other; // call Copy assignment operator but NOT obligatory
 	
 	// 👇Make more sense//
-	// _rawBits = other.getRawBits();
+	_rawBits = other.getRawBits();
 }
 
 Fixed::Fixed(const int value)
@@ -153,7 +153,7 @@ const Fixed& Fixed::max(const Fixed& a, const Fixed& b)
 
 float	Fixed::toFloat() const
 {
-	std::cout << "toFloat called\n";
+	// std::cout << "toFloat called\n";
 	return (static_cast<float>(_rawBits) / (1 << _frac));
 }
 

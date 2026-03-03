@@ -10,7 +10,7 @@ int main()
 	Point const a(0, 0);
 	Point const b(2, 0);
 	Point const c(1, 1);
-	Point const point(1, 0.9);
+	Point const point(2, 1);
 
 
 	std::cout << "a(" << a.getX().toFloat() << "," << a.getY().toFloat() << ")\n";

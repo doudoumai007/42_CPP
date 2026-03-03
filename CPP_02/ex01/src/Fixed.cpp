@@ -44,7 +44,7 @@ Fixed::Fixed(const float value)
 
 float	Fixed::toFloat() const
 {
-	std::cout << "toFloat called\n";
+	// std::cout << "toFloat called\n";
 	return (static_cast<float>(_rawBits) / (1 << _frac));
 }
 

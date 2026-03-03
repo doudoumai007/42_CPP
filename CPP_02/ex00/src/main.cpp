@@ -22,15 +22,14 @@ int main( void )
 	Fixed b(a);
 	std::cout << std::endl;
 	//
-	std::cout << BOLD << YELLOW << "[FIXED B1]\n" << RESET;
-	Fixed b1 = a;
-	std::cout << std::endl;
+	// std::cout << BOLD << YELLOW << "[FIXED B1]\n" << RESET;
+	// Fixed b1 = a;
+	// std::cout << std::endl;
 
 	//Copy assignment operator
 	std::cout << BOLD << YELLOW << "[FIXED C]\n" << RESET;
 	Fixed c;
 	c = b;
-
 
 	std::cout << std::endl << BOLD << BLUE << "----------   SHOW VALUE   ----------" << RESET << std::endl;
 	
