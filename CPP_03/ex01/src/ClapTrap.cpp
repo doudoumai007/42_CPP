@@ -10,11 +10,6 @@ ClapTrap::ClapTrap(const std::string& name)
 	std::cout << "ClapTrap Constructor called\n";
 }
 
-ClapTrap::~ClapTrap()
-{
-	std::cout << "ClapTrap Destructor called\n";
-}
-
 ClapTrap::ClapTrap(const ClapTrap& other)
 		: name(other.name),
 		  hit_point(other.hit_point),
@@ -26,7 +21,7 @@ ClapTrap::ClapTrap(const ClapTrap& other)
 
 ClapTrap& ClapTrap::operator=(const ClapTrap& other)
 {
-	std::cout << "ClapTrap Copy assignment operator called\n";
+	std::cout << "ClapTrap Copy ssignment operator called\n";
 	if (this != &other)
 	{
 		name = other.name;
@@ -37,20 +32,25 @@ ClapTrap& ClapTrap::operator=(const ClapTrap& other)
 	return (*this);
 }
 
+ClapTrap::~ClapTrap()
+{
+	std::cout << "ClapTrap Destructor called\n";
+}
+
 void	ClapTrap::attack(const std::string& target)
 {
 	if (hit_point <= 0)
 	{
-		std::cout << name << " is already dead! Cannot attatck!\n";
+		std::cout << "ClapTrap " << name << " is already dead! Cannot attatck!\n";
 		return ;
 	}
 	if (engergy_point == 0)
 	{
-		std::cout << name << " has no energy left! Cannot attatck\n";
+		std::cout << "ClapTrap " << name << " has no energy left! Cannot attatck\n";
 		return ;
 	}
 	engergy_point--;
-	std::cout << name << " attack " << target 
+	std::cout << "ClapTrap " << name << " attack " << target 
 			  << " causing " << attack_damage << " points of damage!\n";
 	std::cout << name << " used 1 energy point, EP left:  " << engergy_point << std::endl;
 }
