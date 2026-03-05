@@ -34,12 +34,14 @@ int main()
     /////// Copy constructor ///////
     std::cout << BOLD << BLUE << "\n--- Copy constructor ---" << RESET << std::endl;
     ScavTrap b(a);
+    std::cout << BOLD << YELLOW << "[Attack when dead]" << RESET << std::endl;
     b.attack("Enemy");
 
     /////// Copy ssignment operator /////
     std::cout << BOLD << BLUE << "\n--- Copy ssignment operator ---" << RESET << std::endl;
     ScavTrap c("Temp");
     c = b;
+    std::cout << BOLD << YELLOW << "[Attack when dead]" << RESET << std::endl;
     c.attack("Enemy");
 
     /////////// Slope finished ////////////

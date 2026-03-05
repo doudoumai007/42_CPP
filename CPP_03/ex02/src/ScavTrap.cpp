@@ -38,6 +38,25 @@ ScavTrap::~ScavTrap()
 	std::cout << "ScavTrap Destructor called\n";
 }
 
+void ScavTrap::attack(const std::string& target)
+{
+	if (hit_point <= 0)
+	{
+		std::cout << "ScavTrap " << name << " is already dead! Cannot attatck!\n";
+		return ;
+	}
+	if (engergy_point == 0)
+	{
+		std::cout << "ScavTrap " << name << " has no energy left! Cannot attatck\n";
+		return ;
+	}
+	engergy_point--;
+	std::cout << "ScavTrap " << name << " attack " << target 
+			  << " causing " << attack_damage << " points of damage!\n";
+	std::cout << "ScavTrap " << name << " used 1 energy point, EP left:  " << engergy_point << std::endl;
+}
+
+
 void ScavTrap::guardGate()
 {
 	std::cout << "ScavTrap is now in Gate keeper mode\n";

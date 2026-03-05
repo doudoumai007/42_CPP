@@ -40,7 +40,7 @@ ScavTrap::~ScavTrap()
 
 void ScavTrap::attack(const std::string& target)
 {
-		if (hit_point <= 0)
+	if (hit_point <= 0)
 	{
 		std::cout << "ScavTrap " << name << " is already dead! Cannot attatck!\n";
 		return ;
@@ -53,10 +53,10 @@ void ScavTrap::attack(const std::string& target)
 	engergy_point--;
 	std::cout << "ScavTrap " << name << " attack " << target 
 			  << " causing " << attack_damage << " points of damage!\n";
-	std::cout << name << " used 1 energy point, EP left:  " << engergy_point << std::endl;
+	std::cout << "ScavTrap " << name << " used 1 energy point, EP left:  " << engergy_point << std::endl;
 }
 
 void ScavTrap::guardGate()
 {
-	std::cout << "FragTrap" << name <<" is now in Gate keeper mode\n";
+	std::cout << "ScavTrap" << name <<" is now in Gate keeper mode\n";
 }

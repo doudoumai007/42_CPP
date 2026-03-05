@@ -41,12 +41,14 @@ int main()
     /////// Copy constructor ///////
     std::cout << BOLD << BLUE << "\n--- Copy constructor ---" << RESET << std::endl;
     DiamondTrap b(a);
+    std::cout << BOLD << YELLOW << "\n[WhoAmI test]" << RESET << std::endl;
     b.whoAmI();
 
     /////// Copy ssignment operator /////
     std::cout << BOLD << BLUE << "\n--- Copy ssignment operator ---" << RESET << std::endl;
     DiamondTrap c("Temp");
     c = b;
+    std::cout << BOLD << YELLOW << "\n[WhoAmI test]" << RESET << std::endl;
     c.whoAmI();
 
     /////////// Slope finished ////////////

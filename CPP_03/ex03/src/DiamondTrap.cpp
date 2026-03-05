@@ -32,9 +32,7 @@ DiamondTrap& DiamondTrap::operator=(const DiamondTrap& other)
 	if (this != &other)
 	{
 		name = other.name;
-		hit_point = other.hit_point;
-		engergy_point = other.engergy_point;
-		attack_damage = other.attack_damage;
+		ClapTrap::operator=(other);
 	}
 	return (*this);
 }
