@@ -1,14 +1,13 @@
-NAME = Animal
+NAME = Materia
 CXX = c++
 CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -MMD -MP
 
 SRCS = \
-	src/Animal.cpp \
-	src/Cat.cpp \
-	src/Dog.cpp \
-	src/WrongAnimal.cpp \
-	src/WrongCat.cpp \
-	src/Brain.cpp \
+	src/AMateria.cpp \
+	src/Character.cpp \
+	src/Cure.cpp \
+	src/Ice.cpp \
+	src/MateriaSource.cpp \
 	src/main.cpp \
 
 OBJS_DIR = obj

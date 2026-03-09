@@ -3,7 +3,7 @@
 
 #include "AMateria.hpp"
 
-class Cure: public AMateria, public ICharacter
+class Cure: public AMateria
 {
 	public:
 		Cure();
@@ -12,6 +12,7 @@ class Cure: public AMateria, public ICharacter
 		~Cure();
 
 		void use(ICharacter& target);
+		AMateria* clone() const;
 };
 
 #endif
