@@ -4,7 +4,7 @@
 ClapTrap::ClapTrap(const std::string& name)
 		: name(name),
 		  hit_point(10),
-		  engergy_point(10),
+		  energy_point(10),
 		  attack_damage(0)
 {
 	std::cout << "ClapTrap Constructor called\n";
@@ -13,7 +13,7 @@ ClapTrap::ClapTrap(const std::string& name)
 ClapTrap::ClapTrap(const ClapTrap& other)
 		: name(other.name),
 		  hit_point(other.hit_point),
-		  engergy_point(other.engergy_point),
+		  energy_point(other.energy_point),
 		  attack_damage(other.attack_damage)
 {
 	std::cout << "ClapTrap Copy constructor called\n";
@@ -26,7 +26,7 @@ ClapTrap& ClapTrap::operator=(const ClapTrap& other)
 	{
 		name = other.name;
 		hit_point = other.hit_point;
-		engergy_point = other.engergy_point;
+		energy_point = other.energy_point;
 		attack_damage = other.attack_damage;
 	}
 	return (*this);
@@ -44,15 +44,15 @@ void	ClapTrap::attack(const std::string& target)
 		std::cout << "ClapTrap " << name << " is already dead! Cannot attatck!\n";
 		return ;
 	}
-	if (engergy_point == 0)
+	if (energy_point == 0)
 	{
 		std::cout << "ClapTrap " << name << " has no energy left! Cannot attatck\n";
 		return ;
 	}
-	engergy_point--;
+	energy_point--;
 	std::cout << "ClapTrap " << name << " attack " << target 
 			  << " causing " << attack_damage << " points of damage!\n";
-	std::cout << name << " used 1 energy point, EP left:  " << engergy_point << std::endl;
+	std::cout << name << " used 1 energy point, EP left:  " << energy_point << std::endl;
 }
 
 void	ClapTrap::takeDamage(unsigned int amount)
@@ -76,14 +76,14 @@ void	ClapTrap::beRepaired(unsigned int amount)
 		std::cout << "ClapTrap " << name << " is already dead! Cannot repair!\n";
 		return ;
 	}
-	if (engergy_point == 0)
+	if (energy_point == 0)
 	{
 		std::cout << "ClapTrap " << name << " has no energy left! Cannot repair!\n";
 		return ;
 	}
-	engergy_point--;
+	energy_point--;
 	hit_point += amount;
 	std::cout << "ClapTrap " << name << " repairs itself for " << amount
 			  << " HP! Current HP: " << hit_point << std::endl;
-	std::cout << "ClapTrap " << name << " used 1 energy point, EP left:  " << engergy_point << std::endl;
+	std::cout << "ClapTrap " << name << " used 1 energy point, EP left:  " << energy_point << std::endl;
 }

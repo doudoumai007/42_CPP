@@ -45,8 +45,13 @@ int main()
     b.whoAmI();
 
     /////// Copy ssignment operator /////
-    std::cout << BOLD << BLUE << "\n--- Copy ssignment operator ---" << RESET << std::endl;
+    std::cout << BOLD << BLUE << "\n--- Copy assignment operator ---" << RESET << std::endl;
+    std::cout << BOLD << YELLOW << "[Defaulf constructor create Temp]" << RESET << std::endl;
     DiamondTrap c("Temp");
+    std::cout << BOLD << YELLOW << "\n[WhoAmI test]" << RESET << std::endl;
+    c.whoAmI();
+
+    std::cout << BOLD << YELLOW << "\n[Assignment]" << RESET << std::endl;
     c = b;
     std::cout << BOLD << YELLOW << "\n[WhoAmI test]" << RESET << std::endl;
     c.whoAmI();

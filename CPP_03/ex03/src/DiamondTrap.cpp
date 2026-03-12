@@ -10,7 +10,7 @@ DiamondTrap::DiamondTrap(const std::string& name)
 	std::cout << "DiamondTrap Constructor called\n";
 
 	hit_point = FragTrap::hit_point;
-	engergy_point = ScavTrap::engergy_point;
+	energy_point = ScavTrap::energy_point;
 	attack_damage = FragTrap::attack_damage;
 }
 
@@ -22,7 +22,7 @@ DiamondTrap::DiamondTrap(const DiamondTrap& other)
 {
 	std::cout << "DiamondTrap Copy constructor called\n";
 	hit_point = other.hit_point;
-	engergy_point = other.engergy_point;
+	energy_point = other.energy_point;
 	attack_damage = other.attack_damage;
 }
 

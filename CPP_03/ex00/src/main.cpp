@@ -20,16 +20,16 @@ int main()
     a.attack("Enemy");
 
     std::cout << BOLD << BLUE << "\n--- Damage test ---" << RESET << std::endl;
-    a.takeDamage(3);  // 应该直接变 0
+    a.takeDamage(3);  // should be 0
 
     std::cout << BOLD << BLUE << "\n--- Repair test ---" << RESET << std::endl;
     a.beRepaired(5);
 
     std::cout << BOLD << BLUE << "\n--- Kill test ---" << RESET << std::endl;
-    a.takeDamage(100);  // 应该直接变 0
+    a.takeDamage(100);  // should be 0
 
     std::cout << BOLD << BLUE << "\n--- Try to attack when dead ---" << RESET << std::endl;
-    a.attack("Enemy"); // 应该提示 dead
+    a.attack("Enemy"); // should dead
 
     std::cout << BOLD << BLUE << "\n--- Try to repair when dead ---" << RESET << std::endl;
     a.beRepaired(5);

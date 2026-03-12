@@ -31,12 +31,14 @@ class Form
 			const char* what() const throw();
 		};
 		
-		void	beSigned(const Bureaucrat& b);
+		//Sign
+		void				beSigned(const Bureaucrat& b);
 
 		//Getter
-		const std::string& getName() const;
-		int getGradeToSign() const;
-		int getGradeToExe() const;
+		const std::string&	getName() const;
+		bool				getIsSigned() const;
+		int 				getGradeToSign() const;
+		int 				getGradeToExe() const;
 };
 
 

@@ -49,6 +49,11 @@ const std::string& Form::getName() const
 	return(name);
 }
 
+bool Form::getIsSigned() const
+{
+	return (isSigned);
+}
+
 int Form::getGradeToSign() const
 {
 	return (gradeToSign);
@@ -61,8 +66,15 @@ int Form::getGradeToExe() const
 
 std::ostream& operator<<(std::ostream& out, const Form& f)
 {
-	out << f.getName() << " 's Grade to sign is " << f.getGradeToSign()
-					   << " ,Grade to execute is " << f.getGradeToExe() << std::endl; 
+	std::string signedInfo;
+	if (!f.getIsSigned())
+		signedInfo = ", not signed,";
+	else
+		signedInfo = ", signed,";
+
+	out << f.getName() << signedInfo
+					   << " Grade to sign is " << f.getGradeToSign()
+					   << ", Grade to execute is " << f.getGradeToExe() << std::endl; 
 	return (out);
 }
 
