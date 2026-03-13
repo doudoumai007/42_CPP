@@ -3,6 +3,7 @@
 #include "PresidentialPardonForm.hpp"
 #include "RobotomyRequestForm.hpp"
 #include "ShrubberyCreationForm.hpp"
+#include "Intern.hpp"
 
 #include <iostream>
 #include <ctime>
@@ -18,15 +19,32 @@
 int	main()
 {
 	srand(time(NULL));
+
 	/////// Create 3 Forms ///////
-	std::cout << BOLD << BLUE << "--- Create 3 Forms ---\n" << RESET;
-	PresidentialPardonForm	form1("Target1");
-	RobotomyRequestForm		form2("Target2");
-	ShrubberyCreationForm	form3("Target3");
+	std::cout << BOLD << BLUE << "--- Intern create forms ---\n" << RESET;
 	
-	std::cout << form1;
-	std::cout << form2;
-	std::cout << form3;
+	Intern someRandomIntern;
+	AForm* form1 = NULL;
+	AForm* form2 = NULL;
+	AForm* form3 = NULL;
+	AForm* form4 = NULL;
+
+	try
+	{
+		form1 = someRandomIntern.makeForm("presidential pardon", "Target1");
+		form2 = someRandomIntern.makeForm("robotomy request", "Target2");
+		form3 = someRandomIntern.makeForm("shrubbery creation", "Target3");
+		form4 = someRandomIntern.makeForm("Unknown Form", "Target4");
+
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << '\n';
+	}
+
+	std::cout << *form1;
+	std::cout << *form2;
+	std::cout << *form3;
 
 	/////// Too low to sign and exe ///////
 	std::cout << BOLD << BLUE << "\n--- Too low to sign and exe ---\n" << RESET;
@@ -35,12 +53,25 @@ int	main()
 		std::cout << BOLD << YELLOW << "[Bob Sign && Exe]\n" << RESET;
 		Bureaucrat bob("Bob", 149);
 		std::cout << bob;
-		bob.signForm(form1);
-		bob.signForm(form2);
-		bob.signForm(form3);
-		bob.executeForm(form1);
-		bob.executeForm(form2);
-		bob.executeForm(form3);
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << '\n';
+	}	
+
+	/////// Too low to sign and exe ///////
+	std::cout << BOLD << BLUE << "\n--- Too low to sign and exe ---\n" << RESET;
+	try
+	{
+		std::cout << BOLD << YELLOW << "[Bob Sign && Exe]\n" << RESET;
+		Bureaucrat bob("Bob", 149);
+		std::cout << bob;
+		bob.signForm(*form1);
+		bob.signForm(*form2);
+		bob.signForm(*form3);
+		bob.executeForm(*form1);
+		bob.executeForm(*form2);
+		bob.executeForm(*form3);
 	}
 	catch(const std::exception& e)
 	{
@@ -51,12 +82,12 @@ int	main()
 	std::cout << BOLD << BLUE << "\n--- Ok to sign ---\n" << RESET;
 	try
 	{
-		std::cout << BOLD << YELLOW << "[Alice Sign]\n" << RESET;
+		std::cout << BOLD << YELLOW << "[shrubbery creationFormAlice Sign]\n" << RESET;
 		Bureaucrat alice("Alice", 5);
 		std::cout << alice;
-		alice.signForm(form1);
-		alice.signForm(form2);
-		alice.signForm(form3);
+		alice.signForm(*form1);
+		alice.signForm(*form2);
+		alice.signForm(*form3);
 
 		std::cout << BOLD << YELLOW << "[Forms Status]\n" << RESET;
 		std::cout << form1;
@@ -67,32 +98,28 @@ int	main()
 		std::cout << BOLD << YELLOW << "[Bob Exe]\n" << RESET;
 		Bureaucrat bob("Bob", 149);
 		std::cout << bob;
-		bob.executeForm(form1);
-		bob.executeForm(form2);
-		bob.executeForm(form3);
+		bob.executeForm(*form1);
+		bob.executeForm(*form2);
+		bob.executeForm(*form3);
 
 		std::cout << BOLD << BLUE << "\n--- Signed and ok to exe ---\n" << RESET;
 		std::cout << BOLD << YELLOW << "[Alice Exe]\n" << RESET;
 		std::cout << BOLD << GREEN << "[PresidentialPardonForm]\n" << RESET;
-		alice.executeForm(form1);
+		alice.executeForm(*form1);
 		std::cout << BOLD << GREEN << "[RobotomyRequestForm]\n" << RESET;
-		alice.executeForm(form2);
+		alice.executeForm(*form2);
 		std::cout << BOLD << GREEN << "[RobotomyRequestForm]\n" << RESET;
-		alice.executeForm(form3);
+		alice.executeForm(*form3);
 	}
 	catch(const std::exception& e)
 	{
 		std::cerr << e.what() << '\n';
 	}
-	
-	try
-	{
-		Bureaucrat bob("Bob", 147);
-	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
+
+	/////// Delete forms ///////
+	delete (form1);
+	delete (form2);
+	delete (form3);
 
 	return (0);
 }
