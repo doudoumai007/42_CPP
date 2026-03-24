@@ -10,8 +10,8 @@ std::string ScalarConverter::_nonDisplayableNotif = "Non displayable\n";
 
 void	ScalarConverter::_printChar(double value)
 {
-	//Safty Check: NaN , < 0, > 127
-	if (value != value || value < 0 || value > 127)
+	//Safty Check: NaN , < char::min(), > char::max()
+	if (value != value || value < std::numeric_limits<char>::min() || value > std::numeric_limits<char>::max())
 		std::cout << "char: " << _impossibleNotif;
 	//Non displayable
 	else if (!std::isprint(static_cast<char>(value)))
@@ -50,7 +50,7 @@ void	ScalarConverter::_printFloat(double value)
 {
 	std::cout << "float: ";
 	if (value != value)
-		std::cout << "naf\n";
+		std::cout << "nanf\n";
 	// infinity is under type double
 	else if (value == std::numeric_limits<double>::infinity())
 		std::cout << "+inff\n";
