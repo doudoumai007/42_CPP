@@ -14,8 +14,8 @@ class BitcoinExchange
 
 	public:
 		BitcoinExchange() {}
-		// BitcoinExchange(const BitcoinExchange& other);
-		// BitcoinExchange& operator=(const BitcoinExchange& other);
+		BitcoinExchange(const BitcoinExchange& other);
+		BitcoinExchange& operator=(const BitcoinExchange& other);
 		~BitcoinExchange() {}
 
 		void	loadDatabase(const std::string& filename);

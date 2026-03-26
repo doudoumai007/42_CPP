@@ -13,11 +13,11 @@ int	main(int ac, char* av[])
 
 	//Load database
 	BitcoinExchange btc;
-	btc.loadDatabase("data.csv");
 
 	//Input searching file
 	try
 	{
+		btc.loadDatabase("data.csv");
 		btc.processInput(av[1]);
 	}
 	catch(const std::exception& e)

@@ -7,15 +7,23 @@
 #include <ctype.h>
 #include <stdio.h>
 
+BitcoinExchange::BitcoinExchange(const BitcoinExchange& other)
+{
+	*this = other;
+}
+BitcoinExchange& BitcoinExchange::operator=(const BitcoinExchange& other)
+{
+	if (this != &other)
+		rates = other.rates;
+	return (*this);
+}
+
 void    BitcoinExchange::loadDatabase(const std::string& filename)
 {
 	//input file stream using <fstream> read&write file
 	std::ifstream file(filename.c_str());
 	if (!file)
-	{
-		std::cerr << "Error: could't open file.\n";
-		return ;
-	}
+		throw (std::runtime_error("Error: could't open data file."));
 
 	std::string line;
 
@@ -54,7 +62,7 @@ double BitcoinExchange::getRate(const std::string& date)
 	if (it == rates.end() || it->first != date)
 	{
 		if (it == rates.begin())
-			throw (std::runtime_error("Date too early!"));
+			throw (std::runtime_error("Error: Date too early."));
 		--it;
 	}
 	return (it->second);
@@ -153,6 +161,8 @@ std::string trim(const std::string& str)
 void BitcoinExchange::processInput(const std::string& filename)
 {
 	std::ifstream file(filename.c_str());
+	if (!file)
+		throw (std::runtime_error("Error: could't open input file."));
 	std::string line;
 
 	//Jump header
