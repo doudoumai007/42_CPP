@@ -1,9 +1,9 @@
-NAME = btc
+NAME = RPN
 CXX = c++
 CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -MMD -MP
 
 SRCS = \
-	src/BitcoinExchange.cpp \
+	src/RPN.cpp \
 	src/main.cpp \
 
 OBJS_DIR = obj

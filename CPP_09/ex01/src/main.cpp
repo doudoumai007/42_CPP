@@ -9,6 +9,16 @@ int	main(int ac, char* av[])
 		std::cout << "Usage: ./RPN string\n";
 		return (1);
 	}
+	try
+	{
+		RPN rpn;
+		rpn.processInput(av[1]);
+		rpn.printResult();
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << '\n';
+	}
 	
 	return (0);
 }
