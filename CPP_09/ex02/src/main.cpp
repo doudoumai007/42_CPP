@@ -13,6 +13,8 @@ int	main(int ac, char *av[])
 	try
 	{
 		PmergeMe p(av);
+		p.sort();
+		p.printComparisons();
 	}
 	catch(const std::exception& e)
 	{
