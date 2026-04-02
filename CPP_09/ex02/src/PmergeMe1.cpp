@@ -81,7 +81,7 @@ std::vector<int> PmergeMe::generateJacobsthal(std::size_t n)
     return jac;
 }
 
-void	PmergeMe::sortVector(std::vector<int> v)
+void	PmergeMe::sortVector(std::vector<int>& v)
 {
 if (v.size() <= 1) return;
 
@@ -107,13 +107,15 @@ if (v.size() <= 1) return;
 
 	// 递归排序 big
 	sortVector(big);
+	sortVector(small);
+	
 
  // Jacobsthal 序列生成
     std::vector<int> jac = generateJacobsthal(small.size());
     std::vector<bool> inserted(small.size(), false);
 
     // Jacobsthal 顺序插入 small
-    for (size_t i = 0; i < jac.size(); ++i) {
+    for (size_t i = 1; i < jac.size(); ++i) {
         size_t idx = jac[i];
         if (idx < small.size()) {
             // 手动 lower_bound，统计比较次数

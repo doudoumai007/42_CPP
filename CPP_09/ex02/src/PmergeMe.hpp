@@ -19,8 +19,8 @@ class PmergeMe
 		~PmergeMe() {}
 
 		void	sort();
-		void	sortVector(std::vector<int> _vec);
-		// void	sortDeque(std::deque<int> _deq);
+		void	sortVector(std::vector<int>& _vec);
+		void	sortDeque(std::deque<int>& _deq);
 		void	printComparisons();
 
 };

@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <limits>
 #include <iostream>
+#include <ctime>
 
 int	positiveInt(char *av)
 {
@@ -57,38 +58,41 @@ PmergeMe& PmergeMe::operator=(const PmergeMe& other)
 
 void	PmergeMe::sort()
 {
-	if (_vec.size() > 1)
-		sortVector(_vec);
-	// if (_deq.size() > 1)
-	// 	sortDeque(_deq);
+	std::cout << "Before: ";
+	for (size_t i = 0; i < _vec.size(); ++i)
+		std::cout << " " << _vec[i];
+
+	clock_t start = clock();
+	sortVector(_vec);
+	clock_t end =  clock();
+
+	std::cout << "\nAfter:  ";
+	for (size_t i = 0; i < _vec.size(); ++i)
+		std::cout << " " << _vec[i];
+	double time =  double(end - start) / CLOCKS_PER_SEC * 1000000;
+	std::cout << "\nTime to process a range of " << _vec.size()
+			  << " elements with std::vector : " << time << " us " <<std::endl;
+	
+	start = clock();
+	sortDeque(_deq);
+	end =  clock();
+
+	time =  double(end - start) / CLOCKS_PER_SEC * 1000000;
+	std::cout << "Time to process a range of " << _vec.size()
+			  << " elements with std::deque : " << time << " us " <<std::endl;
 }
 
-std::vector<int> PmergeMe::generateJacobsthal(std::size_t n)
+
+void	PmergeMe::sortVector(std::vector<int>& v)
 {
-    std::vector<int> jac;
-    jac.push_back(0);
-    if (n == 1) return jac;
-    jac.push_back(1);
+	if (v.size() <= 1)
+		return ;
+	
+	std::vector<int> small;
+	std::vector<int> big;
 
-    int i = 2;
-    while (true) {
-        size_t next = jac[i-1] + 2 * jac[i-2];
-        if (next >= n)
-            break;
-        jac.push_back(next);
-        i++;
-    }
-    return jac;
-}
-
-void	PmergeMe::sortVector(std::vector<int> v)
-{
-if (v.size() <= 1) return;
-
-	std::vector<int> big, small;
-
-	// 两两分组
-	for (size_t i = 0; i + 1 < v.size(); i += 2)
+	// Pair to compare
+	for (size_t i = 0; i < v.size() - 1; i += 2)
 	{
 		_comparisons++; // 每对比较一次
 		if (v[i] < v[i + 1])
@@ -98,56 +102,87 @@ if (v.size() <= 1) return;
 		}
 		else
 		{
-			small.push_back(v[i + 1]);
 			big.push_back(v[i]);
+			small.push_back(v[i + 1]);
 		}
 	}
+	//Odd number add the last number to small
 	if (v.size() % 2 != 0)
-		small.push_back(v.back());
+		small.push_back(v[v.size() -  1]);
 
-	// 递归排序 big
+	std::cout << "\nSmall: ";
+	for (size_t i = 0; i < small.size(); ++i)
+		std::cout << " " << small[i];
+	
+	std::cout << "\nBig: ";
+	for (size_t i = 0; i < big.size(); ++i)
+		std::cout << " " << big[i];
+
+	// Recursive until find the biggest number and its pair
 	sortVector(big);
 
- // Jacobsthal 序列生成
-    std::vector<int> jac = generateJacobsthal(small.size());
-    std::vector<bool> inserted(small.size(), false);
-
-    // Jacobsthal 顺序插入 small
-    for (size_t i = 0; i < jac.size(); ++i) {
-        size_t idx = jac[i];
-        if (idx < small.size()) {
-            // 手动 lower_bound，统计比较次数
-            size_t l = 0, r = big.size();
-            while (l < r) {
-                _comparisons++;
-                size_t m = (l + r) / 2;
-                if (big[m] < small[idx])
-                    l = m + 1;
-                else
-                    r = m;
-            }
-            big.insert(big.begin() + l, small[idx]);
-            inserted[idx] = true;
-        }
+	// Binary insertion
+	for (size_t i = 0; i < small.size(); ++i) {
+		size_t l = 0, r = big.size();
+		while (l < r) {
+			_comparisons++;
+			size_t m = (l + r) / 2;
+			if (big[m] < small[i])
+				l = m + 1;
+			else
+				r = m;
+		}
+		big.insert(big.begin() + l, small[i]);
     }
 
-    // 剩余 small 元素按顺序插入
-    for (size_t i = 0; i < small.size(); ++i) {
-        if (!inserted[i]) {
-            size_t l = 0, r = big.size();
-            while (l < r) {
-                _comparisons++;
-                size_t m = (l + r) / 2;
-                if (big[m] < small[i])
-                    l = m + 1;
-                else
-                    r = m;
-            }
-            big.insert(big.begin() + l, small[i]);
-        }
+	v = big;
+}
+
+void	PmergeMe::sortDeque(std::deque<int>& deq)
+{
+	if (deq.size() <= 1)
+		return ;
+	
+	std::deque<int> small;
+	std::deque<int> big;
+
+	// Pair to compare
+	for (size_t i = 0; i < deq.size() - 1; i += 2)
+	{
+		if (deq[i] < deq[i + 1])
+		{
+			small.push_back(deq[i]);
+			big.push_back(deq[i + 1]);
+		}
+		else
+		{
+			big.push_back(deq[i]);
+			small.push_back(deq[i + 1]);
+		}
+	}
+
+	//Odd number add the last number to small
+	if (deq.size() % 2 != 0)
+		small.push_back(deq[deq.size() -  1]);
+
+	// Recursive until find the biggest number and its pair
+	sortDeque(big);
+
+	// Binary insertion
+	for (size_t i = 0; i < small.size(); ++i)
+	{
+		size_t l = 0, r = big.size();
+		while (l < r) {
+			size_t m = (l + r) / 2;
+			if (big[m] < small[i])
+				l = m + 1;
+			else
+				r = m;
+		}
+		big.insert(big.begin() + l, small[i]);
     }
 
-    v = big;
+	deq = big;
 }
 
 // ================= 输出比较次数 =================
