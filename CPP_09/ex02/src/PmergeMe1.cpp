@@ -4,6 +4,8 @@
 #include <cstdlib>
 #include <limits>
 #include <iostream>
+#include <utility> // std::pair
+#include <cmath>
 
 int	positiveInt(char *av)
 {
@@ -81,57 +83,143 @@ std::vector<int> PmergeMe::generateJacobsthal(std::size_t n)
     return jac;
 }
 
+int	jacobsthal(int k)
+{
+	return (int)((pow(2, k + 1) + pow(-1, k)) / 3);
+}
+
 void	PmergeMe::sortVector(std::vector<int>& v)
 {
-if (v.size() <= 1) return;
+	if (v.size() <= 1) return;
 
-	std::vector<int> big, small;
+	// std::vector<int> big, small;
 
-	// 两两分组
+	std::vector<std::pair<int, int>> pairs;
+	int odd = -1;
+
+	// 配对并排列
 	for (size_t i = 0; i + 1 < v.size(); i += 2)
 	{
 		_comparisons++; // 每对比较一次
-		if (v[i] < v[i + 1])
-		{
-			small.push_back(v[i]);
-			big.push_back(v[i + 1]);
-		}
+		if (v[i] <= v[i + 1])
+			pairs.push_back(std::make_pair(v[i], v[i+1]));
 		else
-		{
-			small.push_back(v[i + 1]);
-			big.push_back(v[i]);
-		}
+			pairs.push_back(std::make_pair(v[i+1], v[i]));
 	}
+
 	if (v.size() % 2 != 0)
-		small.push_back(v.back());
+		odd = v.back();
+
+	std::vector<int> big;
+	std::vector<std::pair<int, int>>::iterator it = pairs.begin();
+	for (it; it != pairs.end(); ++it)
+		big.push_back(it->second);
 
 	// 递归排序 big
 	sortVector(big);
-	sortVector(small);
+	
+	//插入Jacob[0]
+	big.insert(big.begin(), pairs[0].first);
+
+	//分段插入Jacob
+	int inserted = 1; // 已经插入了 pend[0]
+	int k = 2;
+
+	while (inserted < (int)pairs.size())
+	{
+		int j_curr = jacobsthal(k);
+		int	j_prev = jacobsthal(k-1);
+
+		int	count = j_curr - j_prev;
+		if (inserted + count > (int)pairs.size())
+			count = pairs.size() - count;
+		for (int i = count - 1; i >= 0; --i)
+		{
+			int	index = inserted + i;
+
+			int	r = j_curr - 1;
+			if (r > (int)big.size())
+				r = big.size();
+			
+			// 二分插入
+			size_t l = 0;
+			while (l < r) {
+				_comparisons++;
+				size_t m = (l + r) / 2;
+				if (big[m] < pairs[index].first)
+					l = m + 1;
+				else
+					r = m;
+			}
+			big.insert(big.begin() + l, pairs[index].first);
+		}
+	
+		inserted += count;
+	}
+
+	//插入剩下odd
+	if (odd != -1)
+	{
+		size_t l = 0, r = big.size();
+		while (l < r) {
+			_comparisons++;
+			size_t m = (l + r) / 2;
+			if (big[m] < odd)
+				l = m + 1;
+			else
+				r = m;
+		}
+		big.insert(big.begin() + l, odd);
+	}
+
+	v = big;
+		
+
+
+
+	// // 两两分组
+	// for (size_t i = 0; i + 1 < v.size(); i += 2)
+	// {
+	// 	_comparisons++; // 每对比较一次
+	// 	if (v[i] < v[i + 1])
+	// 	{
+	// 		small.push_back(v[i]);
+	// 		big.push_back(v[i + 1]);
+	// 	}
+	// 	else
+	// 	{
+	// 		small.push_back(v[i + 1]);
+	// 		big.push_back(v[i]);
+	// 	}
+	// }
+	// if (v.size() % 2 != 0)
+	// 	small.push_back(v.back());
+
+
 	
 
  // Jacobsthal 序列生成
-    std::vector<int> jac = generateJacobsthal(small.size());
-    std::vector<bool> inserted(small.size(), false);
+    // std::vector<int> jac = generateJacobsthal(small.size());
+    // std::vector<bool> inserted(small.size(), false);
 
-    // Jacobsthal 顺序插入 small
-    for (size_t i = 1; i < jac.size(); ++i) {
-        size_t idx = jac[i];
-        if (idx < small.size()) {
-            // 手动 lower_bound，统计比较次数
-            size_t l = 0, r = big.size();
-            while (l < r) {
-                _comparisons++;
-                size_t m = (l + r) / 2;
-                if (big[m] < small[idx])
-                    l = m + 1;
-                else
-                    r = m;
-            }
-            big.insert(big.begin() + l, small[idx]);
-            inserted[idx] = true;
-        }
-    }
+	// Jacobsthal 顺序插入 small
+	for (size_t i = 1; i < jac.size(); ++i) {
+		size_t idx = jac[i];
+		if (idx < small.size()) {
+			// 手动 lower_bound，统计比较次数
+			size_t l = 0, r = big.size();
+			while (l < r) {
+				_comparisons++;
+				size_t m = (l + r) / 2;
+				if (big[m] < small[idx])
+					l = m + 1;
+				else
+					r = m;
+			}
+			big.insert(big.begin() + l, small[idx]);
+			inserted[idx] = true;
+		}
+	}
 
     // 剩余 small 元素按顺序插入
     for (size_t i = 0; i < small.size(); ++i) {
