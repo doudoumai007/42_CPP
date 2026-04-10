@@ -59,42 +59,69 @@ PmergeMe& PmergeMe::operator=(const PmergeMe& other)
 
 void	PmergeMe::sort()
 {
-	if (_vec.size() > 1)
-		sortVector(_vec);
+	std::cout << "Before: ";
+	for (size_t i = 0; i < _vec.size(); ++i)
+		std::cout << " " << _vec[i];
+
+	sortVector(_vec);
+
+	std::cout << "\nAfter:  ";
+	for (size_t i = 0; i < _vec.size(); ++i)
+		std::cout << " " << _vec[i];
 	// if (_deq.size() > 1)
 	// 	sortDeque(_deq);
 }
 
-std::vector<int> PmergeMe::generateJacobsthal(std::size_t n)
-{
-    std::vector<int> jac;
-    jac.push_back(0);
-    if (n == 1) return jac;
-    jac.push_back(1);
-
-    int i = 2;
-    while (true) {
-        size_t next = jac[i-1] + 2 * jac[i-2];
-        if (next >= n)
-            break;
-        jac.push_back(next);
-        i++;
-    }
-    return jac;
-}
 
 int	jacobsthal(int k)
 {
 	return (int)((pow(2, k + 1) + pow(-1, k)) / 3);
 }
 
-void	PmergeMe::sortVector(std::vector<int>& v)
+
+void	PmergeMe::sortVector(std::vector<int>& v, int level)
 {
+	typedef typename std::vector<int>::iterator iterator;
+
+	// How many pairs exist in vector
+	int	pair_nbr = v.size() / level;
+	if (pair_nbr < 2)
+		return ;
+	
+	// Odd pair (put at the end of pend)
+	bool odd = pair_nbr % 2 == 1;
+
+	iterator start = v.begin();
+	iterator end = v.begin() + ((pair_nbr - odd) * level);
+
+	// Compare two next pairs' big and swap
+	for (iterator it = start; it < end; it += (level * 2))
+	{
+		_comparisons++;
+		iterator this_start = it;
+		iterator this_end = it + level - 1;
+		iterator next_start = it + level;
+		iterator next_end = it + (level * 2) - 1;
+
+		if (*this_end > *next_end)
+			_swap_pair(this_start, next_start);
+	}
+
+	// Recursive
+	sortVector(v, level * 2);
+	
+	std::vector<iterator> main;
+	std::vector<iterator> pend;
+
+	// Initialize the main chain with first 2 pairs
+
+
+
 	if (v.size() <= 1) return;
 
 	// std::vector<int> big, small;
 
-	std::vector<std::pair<int, int>> pairs;
+	std::vector<std::pair<int, int> > pairs;
 	int odd = -1;
 
 	// 配对并排列
@@ -111,15 +138,30 @@ void	PmergeMe::sortVector(std::vector<int>& v)
 		odd = v.back();
 
 	std::vector<int> big;
-	std::vector<std::pair<int, int>>::iterator it = pairs.begin();
-	for (it; it != pairs.end(); ++it)
+	
+	for (std::vector<std::pair<int, int> >::iterator it = pairs.begin();it != pairs.end(); ++it)
 		big.push_back(it->second);
 
 	// 递归排序 big
 	sortVector(big);
 	
+	std::cout << "\nBig: ";
+	for (size_t i = 0; i < big.size(); ++i)
+		std::cout << " " << big[i];
+
 	//插入Jacob[0]
-	big.insert(big.begin(), pairs[0].first);
+	// big.insert(big.begin(), pairs[0].first);
+	size_t l = 0, r = big.size();
+	while (l < r) {
+		_comparisons++;
+		size_t m = (l + r) / 2;
+		if (big[m] < pairs[0].first)
+			l = m + 1;
+		else
+			r = m;
+	}
+	big.insert(big.begin() + l, pairs[0].first);
+
 
 	//分段插入Jacob
 	int inserted = 1; // 已经插入了 pend[0]
@@ -131,14 +173,15 @@ void	PmergeMe::sortVector(std::vector<int>& v)
 		int	j_prev = jacobsthal(k-1);
 
 		int	count = j_curr - j_prev;
+
 		if (inserted + count > (int)pairs.size())
-			count = pairs.size() - count;
+			count = pairs.size() - inserted;
 		for (int i = count - 1; i >= 0; --i)
 		{
 			int	index = inserted + i;
 
-			int	r = j_curr - 1;
-			if (r > (int)big.size())
+			size_t	r = j_curr - 1;
+			if (r > big.size())
 				r = big.size();
 			
 			// 二分插入
@@ -155,6 +198,7 @@ void	PmergeMe::sortVector(std::vector<int>& v)
 		}
 	
 		inserted += count;
+		k++;
 	}
 
 	//插入剩下odd
@@ -173,75 +217,10 @@ void	PmergeMe::sortVector(std::vector<int>& v)
 	}
 
 	v = big;
-		
-
-
-
-	// // 两两分组
-	// for (size_t i = 0; i + 1 < v.size(); i += 2)
-	// {
-	// 	_comparisons++; // 每对比较一次
-	// 	if (v[i] < v[i + 1])
-	// 	{
-	// 		small.push_back(v[i]);
-	// 		big.push_back(v[i + 1]);
-	// 	}
-	// 	else
-	// 	{
-	// 		small.push_back(v[i + 1]);
-	// 		big.push_back(v[i]);
-	// 	}
-	// }
-	// if (v.size() % 2 != 0)
-	// 	small.push_back(v.back());
-
-
-	
-
- // Jacobsthal 序列生成
-    // std::vector<int> jac = generateJacobsthal(small.size());
-    // std::vector<bool> inserted(small.size(), false);
-
-	// Jacobsthal 顺序插入 small
-	for (size_t i = 1; i < jac.size(); ++i) {
-		size_t idx = jac[i];
-		if (idx < small.size()) {
-			// 手动 lower_bound，统计比较次数
-			size_t l = 0, r = big.size();
-			while (l < r) {
-				_comparisons++;
-				size_t m = (l + r) / 2;
-				if (big[m] < small[idx])
-					l = m + 1;
-				else
-					r = m;
-			}
-			big.insert(big.begin() + l, small[idx]);
-			inserted[idx] = true;
-		}
-	}
-
-    // 剩余 small 元素按顺序插入
-    for (size_t i = 0; i < small.size(); ++i) {
-        if (!inserted[i]) {
-            size_t l = 0, r = big.size();
-            while (l < r) {
-                _comparisons++;
-                size_t m = (l + r) / 2;
-                if (big[m] < small[i])
-                    l = m + 1;
-                else
-                    r = m;
-            }
-            big.insert(big.begin() + l, small[i]);
-        }
-    }
-
-    v = big;
 }
 
 // ================= 输出比较次数 =================
 void PmergeMe::printComparisons()
 {
-	std::cout << "Total comparisons: " << _comparisons << "\n";
+	std::cout << "\nTotal comparisons: " << _comparisons << "\n";
 }

@@ -10,7 +10,15 @@ class PmergeMe
 		std::deque<int>		_deq;
 		long				_comparisons;
 
-		std::vector<int> generateJacobsthal(std::size_t n);
+		template <typename T>
+		void	_swap_pair(T this_start, T next_start, int level)
+		{
+			while (this_start != next_start)
+			{
+				std::iter_swap(this_start, next_start);
+				++this_start;
+			}
+		}
 
 	public:
 		PmergeMe(char *av[]);
@@ -19,8 +27,11 @@ class PmergeMe
 		~PmergeMe() {}
 
 		void	sort();
-		void	sortVector(std::vector<int>& _vec);
+		void	sortVector(std::vector<int>& _vec, int level);
 		// void	sortDeque(std::deque<int> _deq);
 		void	printComparisons();
 
+
+
 };
+
