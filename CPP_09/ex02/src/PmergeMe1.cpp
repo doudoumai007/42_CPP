@@ -78,26 +78,32 @@ int	jacobsthal(int k)
 	return (int)((pow(2, k + 1) + pow(-1, k)) / 3);
 }
 
-
 void	PmergeMe::sortVector(std::vector<int>& v, int level)
 {
 	typedef typename std::vector<int>::iterator iterator;
 
-	// How many pairs exist in vector
-	int	pair_nbr = v.size() / level;
-	if (pair_nbr < 2)
+	// How many blocks exist in vector
+	// level starts by 1, and also means how many elements in each block
+	int	block_nbr = v.size() / level;
+
+	// When there is less than 2 blocks, stop recursive
+	if (block_nbr < 2)
 		return ;
 	
-	// Odd pair (put at the end of pend)
-	bool odd = pair_nbr % 2 == 1;
+	// Too see if every block can make paris, if not there's a odd ate the emd
+	bool is_odd = block_nbr % 2 == 1;
 
+	// Prepare for iterator 
+	// start: first element of 1st block
+	// end: last element of the last block)
 	iterator start = v.begin();
-	iterator end = v.begin() + ((pair_nbr - odd) * level);
+	iterator end = v.begin() + ((block_nbr - odd) * level);
 
 	// Compare two next pairs' big and swap
 	for (iterator it = start; it < end; it += (level * 2))
 	{
 		_comparisons++;
+		// 2 blocks: first block & next block
 		iterator this_start = it;
 		iterator this_end = it + level - 1;
 		iterator next_start = it + level;
@@ -110,113 +116,36 @@ void	PmergeMe::sortVector(std::vector<int>& v, int level)
 	// Recursive
 	sortVector(v, level * 2);
 	
+	// Every recursive we rebuild the main and the pend
 	std::vector<iterator> main;
 	std::vector<iterator> pend;
 
-	// Initialize the main chain with first 2 pairs
+	// Initialize the main chain with the first 2 blocks: a1, b1
+	// Because b1 is the smallest in b group and a1 is definately smaller than b1
+	main.push_back(v[level - 1]);
+	main.push_back(v[level * 2 - 1]);
 
-
-
-	if (v.size() <= 1) return;
-
-	// std::vector<int> big, small;
-
-	std::vector<std::pair<int, int> > pairs;
-	int odd = -1;
-
-	// 配对并排列
-	for (size_t i = 0; i + 1 < v.size(); i += 2)
+	// According to the current level, we put main and pend chain
+	// Jump the first 2 blocks(a1 b1)
+	// Everytime increment level*2 elements (to jump 2 blocks)
+	// Put the first block in pend and the second block in main
+	for (iterator it = start + 2 * level; it + level * 2 <= end; it += level * 2)
 	{
-		_comparisons++; // 每对比较一次
-		if (v[i] <= v[i + 1])
-			pairs.push_back(std::make_pair(v[i], v[i+1]));
-		else
-			pairs.push_back(std::make_pair(v[i+1], v[i]));
+		iterator first_block = it;
+		iterator second_block = it + level;
+
+		pend.push_back(*(first_block + level - 1));
+		main.push_back(*(second_block + level - 1));
 	}
 
-	if (v.size() % 2 != 0)
-		odd = v.back();
-
-	std::vector<int> big;
-	
-	for (std::vector<std::pair<int, int> >::iterator it = pairs.begin();it != pairs.end(); ++it)
-		big.push_back(it->second);
-
-	// 递归排序 big
-	sortVector(big);
-	
-	std::cout << "\nBig: ";
-	for (size_t i = 0; i < big.size(); ++i)
-		std::cout << " " << big[i];
-
-	//插入Jacob[0]
-	// big.insert(big.begin(), pairs[0].first);
-	size_t l = 0, r = big.size();
-	while (l < r) {
-		_comparisons++;
-		size_t m = (l + r) / 2;
-		if (big[m] < pairs[0].first)
-			l = m + 1;
-		else
-			r = m;
-	}
-	big.insert(big.begin() + l, pairs[0].first);
+	// Put the odd block in pend
+	if (is_odd)
+		
 
 
-	//分段插入Jacob
-	int inserted = 1; // 已经插入了 pend[0]
-	int k = 2;
 
-	while (inserted < (int)pairs.size())
-	{
-		int j_curr = jacobsthal(k);
-		int	j_prev = jacobsthal(k-1);
 
-		int	count = j_curr - j_prev;
 
-		if (inserted + count > (int)pairs.size())
-			count = pairs.size() - inserted;
-		for (int i = count - 1; i >= 0; --i)
-		{
-			int	index = inserted + i;
-
-			size_t	r = j_curr - 1;
-			if (r > big.size())
-				r = big.size();
-			
-			// 二分插入
-			size_t l = 0;
-			while (l < r) {
-				_comparisons++;
-				size_t m = (l + r) / 2;
-				if (big[m] < pairs[index].first)
-					l = m + 1;
-				else
-					r = m;
-			}
-			big.insert(big.begin() + l, pairs[index].first);
-		}
-	
-		inserted += count;
-		k++;
-	}
-
-	//插入剩下odd
-	if (odd != -1)
-	{
-		size_t l = 0, r = big.size();
-		while (l < r) {
-			_comparisons++;
-			size_t m = (l + r) / 2;
-			if (big[m] < odd)
-				l = m + 1;
-			else
-				r = m;
-		}
-		big.insert(big.begin() + l, odd);
-	}
-
-	v = big;
 }
 
 // ================= 输出比较次数 =================
@@ -224,3 +153,5 @@ void PmergeMe::printComparisons()
 {
 	std::cout << "\nTotal comparisons: " << _comparisons << "\n";
 }
+
+// https://dev.to/emuminov/human-explanation-and-step-by-step-visualisation-of-the-ford-johnson-algorithm-5g91

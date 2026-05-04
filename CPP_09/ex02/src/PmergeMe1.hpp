@@ -11,7 +11,7 @@ class PmergeMe
 		long				_comparisons;
 
 		template <typename T>
-		void	_swap_pair(T this_start, T next_start, int level)
+		void	_swap_pair(T this_start, T next_start)
 		{
 			while (this_start != next_start)
 			{
