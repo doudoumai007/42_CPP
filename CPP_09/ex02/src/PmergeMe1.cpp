@@ -122,6 +122,7 @@ void	PmergeMe::sortVector(std::vector<int>& v, int level)
 
 	// Initialize the main chain with the first 2 blocks: a1, b1
 	// Because b1 is the smallest in b group and a1 is definately smaller than b1
+	// (For the biggest level, just put both of the big blocks directly)
 	main.push_back(v[level - 1]);
 	main.push_back(v[level * 2 - 1]);
 
@@ -140,6 +141,32 @@ void	PmergeMe::sortVector(std::vector<int>& v, int level)
 
 	// Put the odd block in pend
 	if (is_odd)
+		pend.push_back(*(end + level - 1));
+
+	// Insert according to the Jacobsthal sequence
+	int	prev_jacobsthal = jacobsthal(1);
+	int inserted_numbers = 0;
+	// As we already put a1 to the main, so we the sequence in main starts from k=2->3
+	for (int k = 2;; ++k)
+	{
+		int current_jacobsthal = jacobsthal(k);
+		int jacobsthal_diff = curr_jacobsthal - prev_jacobsthal;
+		int offset = 0;
+
+		if (jacobsthal_diff > static_cast<int>(pend.size()))
+			break ;
+		int i = jacobsthal_diff;
+		iterator pend_it = pend.begin() + jacobsthal_diff - 1;
+		bound_it = main.begin() + curr_jacobsthal + inserted_numbers;
+
+		while (i--)
+		{
+			iterator idx = std::upper_bound(main.begin(), bound_it, *pend_it, _comp<iterator>);
+			iterator = main.insert(idx, *pend_it);
+			pend_it = pend.erase(pend_it);
+			
+		}
+	}
 		
 
 
