@@ -169,7 +169,7 @@ template <typename T> void PmergeMe::_merge_insertion_sort(T& container, int pai
     /* Use copy vector to store all the numbers, in order not to overwrite the
        original iterators. */
     std::vector<int> copy;
-    copy.reserve(container.size());
+    copy.reserve(.size());
     for (typename std::vector<Iterator>::iterator it = main.begin(); it != main.end(); it++)
     {
         for (int i = 0; i < pair_level; i++)

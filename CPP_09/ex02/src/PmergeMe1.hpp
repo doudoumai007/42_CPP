@@ -8,15 +8,15 @@ class PmergeMe
 	private:
 		std::vector<int>	_vec;
 		std::deque<int>		_deq;
-		long				_comparisons;
 
 		template <typename T>
-		void	_swap_pair(T this_start, T next_start)
+		void	_swap_pair(T this_start, T next_start, int level)
 		{
-			while (this_start != next_start)
+			for (int i = 0; i < level; ++i)
 			{
 				std::iter_swap(this_start, next_start);
 				++this_start;
+				++next_start;
 			}
 		}
 
@@ -31,7 +31,14 @@ class PmergeMe
 		// void	sortDeque(std::deque<int> _deq);
 		void	printComparisons();
 
-
+		static long	_comparisons;
 
 };
+
+template <typename T>
+bool	_comp(T left_value, T right_value)
+{
+	PmergeMe::_comparisons++;
+	return (*left_value < *right_value);
+}
 
