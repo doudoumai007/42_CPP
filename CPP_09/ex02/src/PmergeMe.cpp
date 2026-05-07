@@ -1,12 +1,12 @@
-#include "PmergeMe1.hpp"
+#include "PmergeMe.hpp"
 
 #include <stdexcept>
 #include <cstdlib>
 #include <limits>
 #include <iostream>
-#include <utility> // std::pair
 #include <cmath>
 #include <algorithm> // std::upper_bound
+#include <ctime>
 
 long	PmergeMe::_comparisons = 0;
 
@@ -64,15 +64,23 @@ void	PmergeMe::sort()
 	for (size_t i = 0; i < _vec.size(); ++i)
 		std::cout << " " << _vec[i];
 
+	clock_t vec_start =  clock();
 	sortVector(_vec, 1);
+	clock_t vec_end = clock();
+	clock_t deq_start = clock();
+	sortDeque(_deq, 1);
+	clock_t deq_end = clock();
 
 	std::cout << "\nAfter:  ";
-	for (size_t i = 0; i < _vec.size(); ++i)
-		std::cout << " " << _vec[i];
-	// if (_deq.size() > 1)
-	// 	sortDeque(_deq);
-}
+	for (size_t i = 0; i < _deq.size(); ++i)
+		std::cout << " " << _deq[i];
 
+	double time_vec = static_cast<double>(vec_end - vec_start) / CLOCKS_PER_SEC * 1000000;
+	double time_deq = static_cast<double>(deq_end - deq_start) / CLOCKS_PER_SEC * 1000000;
+
+	std::cout << "\nTime to process a range of " << _vec.size() << " elements with std::vector : " << time_vec << " us\n";
+	std::cout << "Time to process a range of " << _deq.size() << " elements with std::deque : " << time_deq << " us\n";
+}
 
 int	jacobsthal(int k)
 {
@@ -148,7 +156,7 @@ void	PmergeMe::sortVector(std::vector<int>& v, int level)
 
 	// Put the odd block in pend
 	if (is_odd)
-		pend.push_back(end + level - 1);
+		pend.push_back(v.begin() + (level * block_nbr) - 1);
 
 	// 🟢 Insert according to the Jacobsthal sequence
 	int	prev_jacobsthal = jacobsthal(1);
@@ -204,7 +212,7 @@ void	PmergeMe::sortVector(std::vector<int>& v, int level)
 	copy.reserve(v.size());
 	for (iterator_it it = main.begin(); it != main.end(); ++it)
 	{
-		iterator block_start = *it - level + 1;
+		iterator block_start = *it - (level - 1);
 		for (int i = 0; i < level; ++i)
 			copy.push_back(*(block_start + i));
 	}
@@ -221,12 +229,111 @@ void	PmergeMe::sortVector(std::vector<int>& v, int level)
 	// 	std::cout << " " << _vec[i];
 }
 
-// ================= 输出比较次数 =================
-void PmergeMe::printComparisons()
+void	PmergeMe::sortDeque(std::deque<int>& d, int level)
 {
-	std::cout << "\nTotal comparisons: " << _comparisons << "\n";
+	typedef typename std::deque<int>::iterator iterator;
+	typedef typename std::deque<iterator>::iterator iterator_it;
+
+	int	block_nbr = d.size() / level;
+
+	if (block_nbr < 2)
+		return ;
+
+	bool is_odd = block_nbr % 2 == 1;
+
+	iterator start = d.begin();
+	iterator end = d.begin() + ((block_nbr - is_odd) * level);
+
+	for (iterator it = start; it + (level * 2) <= end; it += (level * 2))
+	{
+		_comparisons++;
+		iterator this_start = it;
+		iterator this_end = it + level - 1;
+		iterator next_start = it + level;
+		iterator next_end = it + (level * 2) - 1;
+
+		if (*this_end > *next_end)
+			_swap_pair(this_start, next_start, level);
+	}
+
+	sortDeque(d, level * 2);
+
+	std::deque<iterator> main;
+	std::deque<iterator> pend;
+
+	main.push_back(d.begin() + level - 1);
+	main.push_back(d.begin() + level * 2 - 1);
+
+	for (iterator it = start + 2 * level; it + level * 2 <= end; it += level * 2)
+	{
+		iterator first_block = it;
+		iterator second_block = it + level;
+
+		pend.push_back(first_block + level - 1);
+		main.push_back(second_block + level - 1);
+	}
+
+	if (is_odd)
+		pend.push_back(d.begin() + (level * block_nbr) - 1);
+
+	int	prev_jacobsthal = jacobsthal(1);
+	int inserted_numbers = 0;
+	for (int k = 2;; ++k)
+	{
+		int curr_jacobsthal = jacobsthal(k);
+		int jacobsthal_diff = curr_jacobsthal - prev_jacobsthal;
+		int offset = 0;
+
+		if (jacobsthal_diff > static_cast<int>(pend.size()))
+			break ;
+		int i = jacobsthal_diff;
+		iterator_it pend_it = pend.begin() + jacobsthal_diff - 1;
+		iterator_it bound_it = main.begin() + curr_jacobsthal + inserted_numbers;
+
+		while (i--)
+		{
+			iterator_it idx = std::upper_bound(main.begin(), bound_it, *pend_it, _comp<iterator>);
+
+			iterator_it inserted = main.insert(idx, *pend_it);
+
+			pend_it = pend.erase(pend_it);
+			if (!pend.empty() && pend_it != pend.begin())
+				pend_it--;
+			if ((inserted - main.begin()) == curr_jacobsthal + inserted_numbers)
+				offset = 1;
+			bound_it = main.begin() + curr_jacobsthal + inserted_numbers - offset;
+		}
+		prev_jacobsthal = curr_jacobsthal;
+		inserted_numbers += jacobsthal_diff;
+		offset = 0;
+	}
+	
+	for (ssize_t i = pend.size() - 1; i >= 0; --i)
+	{
+		iterator_it curr_pend = pend.begin() + i;
+		iterator_it idx= std::upper_bound(main.begin(), main.end(), *curr_pend, _comp<iterator>);
+		main.insert(idx, *curr_pend);
+	}
+
+	std::deque<int> copy;
+	for (iterator_it it = main.begin(); it != main.end(); ++it)
+	{
+		iterator block_start = *it - (level - 1);
+		for (int i = 0; i < level; ++i)
+			copy.push_back(*(block_start + i));
+	}
+	// Replace
+	iterator d_it = d.begin();
+	for (iterator copy_it = copy.begin(); copy_it != copy.end(); ++copy_it)
+	{
+		*d_it = *copy_it;
+		++d_it;
+	}
 }
 
-
+void PmergeMe::printComparisons()
+{
+	std::cout << "Total comparisons: " << _comparisons / 2 << "\n";
+}
 
 // https://dev.to/emuminov/human-explanation-and-step-by-step-visualisation-of-the-ford-johnson-algorithm-5g91

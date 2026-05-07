@@ -28,7 +28,7 @@ class PmergeMe
 
 		void	sort();
 		void	sortVector(std::vector<int>& _vec, int level);
-		// void	sortDeque(std::deque<int> _deq);
+		void	sortDeque(std::deque<int>& _deq, int level);
 		void	printComparisons();
 
 		static long	_comparisons;
